@@ -20,7 +20,7 @@ class TimerViewModel : ViewModel() {
     }
 
     fun removeTimer(timerInfo: TimerInfo) {
-        _timerListState.update { list -> list.apply { remove(timerInfo) } }
+        _timerListState.update { list -> list.apply { removeIf { it.id == timerInfo.id } } }
     }
 }
 
@@ -38,16 +38,14 @@ class TimerInfo(
             .plus(TimeUnit.SECONDS.toMillis(seconds.toLong()))
     )
 
-    /* ticker flow for timer */
-    val timerFlow = flow<Long> {
-        val currentTime = System.currentTimeMillis()
-        while (endTime > currentTime) {
-            emit(endTime - currentTime)
+    val millisRemaining: Long
+        get() = (endTime - System.currentTimeMillis()).coerceAtLeast(0L)
+
+    val timerFlow = flow {
+        while (millisRemaining > 0) {
+            emit((endTime - System.currentTimeMillis()).coerceAtLeast(0L))
             delay(1000)
         }
+        emit(0L)
     }
-
-    /* is timer timed out, delegated property */
-    val timedOut: Boolean
-        get() = System.currentTimeMillis() > endTime
 }

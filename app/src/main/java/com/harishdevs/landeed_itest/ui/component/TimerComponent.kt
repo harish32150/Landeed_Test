@@ -23,10 +23,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
 
 @Composable
 @Preview
@@ -54,7 +51,7 @@ fun TimerComponent(viewModel: TimerViewModel = androidx.lifecycle.viewmodel.comp
 
     Box(modifier = Modifier.fillMaxSize()) {
 
-        LazyColumn(modifier = Modifier.padding(top = 24.dp, bottom = 16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        LazyColumn(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             items(items = timerListState, key = { item: TimerInfo -> item.id }) {
                 TimerItemComponent(it, viewModel::removeTimer)
             }
@@ -80,9 +77,6 @@ fun TimerComponent(viewModel: TimerViewModel = androidx.lifecycle.viewmodel.comp
 @Composable
 private fun TimerItemComponent(timerInfo: TimerInfo = TimerInfo(0, 2, 30), onRemove: (TimerInfo) -> Unit) {
     val ticker: Long by timerInfo.timerFlow.collectAsState(initial = 0)
-  /*  var ticker by remember {
-        mutableLongStateOf(timerInfo.endTime - System.currentTimeMillis())
-    }*/
 
     Card(
         modifier = Modifier
@@ -103,9 +97,19 @@ private fun TimerItemComponent(timerInfo: TimerInfo = TimerInfo(0, 2, 30), onRem
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = if (ticker == 0L) "Timed Out" else "Timer Running")
+            when {
+                ticker == 0L -> "Timed Out"
+                else -> {
+                    val seconds = ticker / 1000
+                    val hours = seconds / 3600
+                    val minutes = (seconds % 3600) / 60
+                    val remainingSeconds = seconds % 60
 
-            Text(text = "${ticker.div(1000L)} seconds Left")
+                    String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds)
+                }
+            }.let {
+                Text(text = it, style = MaterialTheme.typography.displaySmall)
+            }
 
             IconButton(
                 onClick = { onRemove(timerInfo) },
@@ -122,11 +126,4 @@ private fun TimerItemComponent(timerInfo: TimerInfo = TimerInfo(0, 2, 30), onRem
             }
         }
     }
-
-//    LaunchedEffect(key1 = ticker, block = {
-//        while (timerInfo.endTime > System.currentTimeMillis()) {
-//            ticker = timerInfo.endTime - System.currentTimeMillis()
-//            delay(1000)
-//        }
-//    })
 }
