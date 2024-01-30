@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 fun HomeComponent() {
 
     val titles = listOf("Timer", "World Clock")
-    var selectedIdx by remember { mutableIntStateOf(1) }
+    var selectedIdx by remember { mutableIntStateOf(0) }
 
     Scaffold(
         topBar = {
