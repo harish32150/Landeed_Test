@@ -13,14 +13,14 @@ import java.util.concurrent.TimeUnit
 class TimerViewModel : ViewModel() {
 
     private val _timerListState = MutableStateFlow<MutableList<TimerInfo>>(mutableListOf())
-    val timerListState: StateFlow<List<TimerInfo>> = _timerListState.asStateFlow()
+    val timerListState: StateFlow<MutableList<TimerInfo>> = _timerListState.asStateFlow()
 
     fun addTimer(hours: Int, minutes: Int, seconds: Int) {
         _timerListState.update { list -> list.apply { add(TimerInfo(hours, minutes, seconds)) } }
     }
 
     fun removeTimer(timerInfo: TimerInfo) {
-        _timerListState.update { list -> list.apply { removeIf { it.id == timerInfo.id } } }
+        _timerListState.update { list -> list.filterNot { it.id == timerInfo.id }.toMutableList() }
     }
 }
 
