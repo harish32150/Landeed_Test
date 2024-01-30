@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,8 +24,8 @@ fun WorldClockComponent(viewModel: WorldClockViewModel = androidx.lifecycle.view
     val selectedTimeZone: WCTimeZone by viewModel.timezone.collectAsState()
     val time: String by viewModel.time.collectAsState("--:--:--")
 
-    Column {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
+        Row {
             FilterChip(
                 selected = selectedTimeZone == WCTimeZone.IST,
                 onClick = { viewModel.timezone.value = WCTimeZone.IST },
@@ -36,6 +38,7 @@ fun WorldClockComponent(viewModel: WorldClockViewModel = androidx.lifecycle.view
             )
         }
 
-        Text(text = time, modifier = Modifier.padding(top = 14.dp))
+        Text(text = "Current Time:", modifier = Modifier.padding(top = 14.dp), style = MaterialTheme.typography.titleMedium)
+        Text(text = time, style = MaterialTheme.typography.displayMedium)
     }
 }
