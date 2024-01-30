@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -39,6 +40,6 @@ fun WorldClockComponent(viewModel: WorldClockViewModel = androidx.lifecycle.view
         }
 
         Text(text = "Current Time:", modifier = Modifier.padding(top = 14.dp), style = MaterialTheme.typography.titleMedium)
-        Text(text = time, style = MaterialTheme.typography.displayMedium)
+        Text(text = time, style = MaterialTheme.typography.displayMedium, textAlign = TextAlign.Center)
     }
 }
