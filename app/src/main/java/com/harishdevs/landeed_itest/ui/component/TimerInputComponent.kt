@@ -1,5 +1,6 @@
 package com.harishdevs.landeed_itest.ui.component
 
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -31,6 +34,7 @@ import androidx.compose.ui.window.Dialog
 @Composable
 fun TimerInputComponent(onDismiss: () -> Unit, onStart: (Int, Int, Int) -> Unit) {
 
+    val context = LocalContext.current
     var hours by remember { mutableStateOf(TextFieldValue("00")) }
     var minutes by remember { mutableStateOf(TextFieldValue("00")) }
     var seconds by remember { mutableStateOf(TextFieldValue("00")) }
@@ -79,8 +83,15 @@ fun TimerInputComponent(onDismiss: () -> Unit, onStart: (Int, Int, Int) -> Unit)
                     }
 
                     TextButton(onClick = {
-                        /* validate if required */
-                        onStart(hours.text.toInt(), minutes.text.toInt(), seconds.text.toInt())
+                        /* validate */
+                        if (hours.text.toIntOrNull() == null)
+                            Toast.makeText(context, "Invalid Hours", Toast.LENGTH_SHORT).show()
+                        else if (minutes.text.toIntOrNull() == null)
+                            Toast.makeText(context, "Invalid Minutes", Toast.LENGTH_SHORT).show()
+                        else if (seconds.text.toIntOrNull() == null)
+                            Toast.makeText(context, "Invalid Seconds", Toast.LENGTH_SHORT).show()
+                        else
+                            onStart(hours.text.toInt(), minutes.text.toInt(), seconds.text.toInt())
                     }) {
                         Text(text = "START")
                     }
